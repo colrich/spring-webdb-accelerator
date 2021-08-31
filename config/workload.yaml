@@ -1,0 +1,20 @@
+apiVersion: experimental.kontinue.io/v1
+kind: Workload
+metadata:
+  name: spring-webdb
+  labels:
+    app.kubernetes.io/name: spring-webdb
+    app.tanzu.vmware.com/workload-type: web
+spec:
+  git:
+    # update when code is pushed to a new location
+    url: https://github.com/cpage-pivotal/spring-webdb.git
+    ref:
+      branch: main
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 100m
+    limits:
+      memory: 1Gi
+      cpu: 4000m

@@ -1,0 +1,47 @@
+accelerator:
+  displayName: Spring WebDB Sample
+  description: A sample Spring-based application
+  iconUrl: https://raw.githubusercontent.com/sample-accelerators/icons/master/icon-tanzu-light.png
+  tags:
+  - java
+  - spring
+
+  options:
+  - name: includeKubernetes
+    label: Kubernetes deployment
+    display: true
+    description: Toggle "On" to include skaffold and Kubernetes deployment configurations.
+    inputType: toggle
+    dataType: boolean
+    defaultValue: false
+
+  - name: enableAppLiveView
+    label: App Live View
+    dependsOn:
+      name: includeKubernetes
+    description: Toggle "On" to enable Application Live View integration.
+    inputType: toggle
+    dataType: boolean
+    defaultValue: false
+
+engine:
+  merge:
+  - include: [ "**/*" ]
+    exclude: [ "kubernetes/*.yaml", "skaffold.yaml" ]
+  - condition: "#includeKubernetes"
+    include: [ "kubernetes/*.yaml", "skaffold.yaml" ]
+    exclude: [ "kubernetes/deployment-alv.yaml"]
+    chain:
+    - type: ReplaceText
+      substitutions:
+      - text: spring-webdb
+        with: "#artifactId"
+  - condition: "#includeKubernetes and #enableAppLiveView"
+    include: [ "kubernetes/deployment-alv.yaml" ]
+    chain:
+    - type: ReplaceText
+      substitutions:
+      - text: spring-webdb
+        with: "#artifactId"
+    - type: RewritePath
+      rewriteTo: "'kubernetes/deployment.yaml'"
